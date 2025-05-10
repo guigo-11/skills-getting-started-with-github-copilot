@@ -142,3 +142,39 @@ footer {
   padding: 20px;
   color: #666;
 }
+
+.participants {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #eef7ff;
+  border: 1px solid #b3d9ff;
+  border-radius: 5px;
+}
+
+.participants strong {
+  display: block;
+  margin-bottom: 5px;
+  color: #0056b3;
+}
+
+.participants ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.participants li {
+  margin-bottom: 5px;
+}
+
+.delete-participant {
+  background: none;
+  border: none;
+  color: #c62828;
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.delete-participant:hover {
+  color: #ff1744;
+}
