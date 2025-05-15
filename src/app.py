@@ -5,26 +5,19 @@ A super simple FastAPI application that allows students to view and sign up
 for extracurricular activities at Mergington High School.
 """
 
+from contextlib import asynccontextmanager
+import motor.motor_asyncio
+from typing import Dict, Any
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import RedirectResponse
 import os
 from pathlib import Path
-import motor.motor_asyncio
-from typing import Dict, Any
-
-app = FastAPI(title="Mergington High School API",
-              description="API for viewing and signing up for extracurricular activities")
 
 # MongoDB connection
 client = motor.motor_asyncio.AsyncIOMotorClient('mongodb://localhost:27017')
 db = client.mergington_high
 activities_collection = db.activities
-
-# Mount the static files directory
-current_dir = Path(__file__).parent
-app.mount("/static", StaticFiles(directory=os.path.join(Path(__file__).parent,
-          "static")), name="static")
 
 # Initial activities data
 initial_activities = {
@@ -102,14 +95,21 @@ initial_activities = {
     }
 }
 
-@app.on_event("startup")
-async def init_db():
-    # Clear existing activities
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     await activities_collection.delete_many({})
-    
-    # Insert initial activities
     for name, details in initial_activities.items():
         await activities_collection.insert_one({"name": name, **details})
+    yield
+
+app = FastAPI(title="Mergington High School API",
+              description="API for viewing and signing up for extracurricular activities",
+              lifespan=lifespan)
+
+# Mount the static files directory
+current_dir = Path(__file__).parent
+app.mount("/static", StaticFiles(directory=os.path.join(Path(__file__).parent,
+          "static")), name="static")
 
 @app.get("/")
 def read_root():
