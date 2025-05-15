@@ -14,5 +14,5 @@ fi
 # Start FastAPI app
 cd src
 
-echo "Iniciando FastAPI (Uvicorn)..."
+echo "Starting FastAPI (Uvicorn)..."
 uvicorn app:app --reload --host 0.0.0.0 --port 8000
